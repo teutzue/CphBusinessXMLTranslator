@@ -4,7 +4,12 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Envelope;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
@@ -67,7 +72,7 @@ public class CphBusinessXMLSender {
     }
 
 
-    public void sendToBank(String message) {
+    public void sendToBank(String message) throws ParserConfigurationException, SAXException {
         CphBusinessXMLSender cphBuisnessXml = null;
         String response = null;
         try {
@@ -82,7 +87,13 @@ public class CphBusinessXMLSender {
                     "<creditScore>525</creditScore><loanAmount>1234567.0</loanAmount><ssn>1234566543</ssn></LoanRequest>");*/
             System.out.println(" [.] Got response back '" + response + "'");
 
+            //add the origin bank to the resp
+            response = addBankName(response,"<bank>NordeaBank</bank>");
+
             //send the response to the normalizer :)
+            NormalizerSender nz = new NormalizerSender();
+            nz.sendToNormalizer(response);
+
 
         }
         catch  (IOException | TimeoutException | InterruptedException e) {
@@ -101,5 +112,9 @@ public class CphBusinessXMLSender {
                 catch (IOException _ignore) {}
             }
         }
+    }
+
+    public String addBankName(String message, String append) {
+        return message.substring(0, 14) + append+message.substring(14, message.length());
     }
 }

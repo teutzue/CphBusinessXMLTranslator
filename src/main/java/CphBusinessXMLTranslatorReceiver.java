@@ -1,6 +1,8 @@
 import com.rabbitmq.client.*;
 import org.json.JSONException;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
@@ -63,6 +65,10 @@ public class CphBusinessXMLTranslatorReceiver {
                 } catch (KeyManagementException e) {
                     e.printStackTrace();
                 } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (ParserConfigurationException e) {
                     e.printStackTrace();
                 }
             }
